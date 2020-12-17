@@ -1,0 +1,88 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Recording</title>
+</head>
+<body>
+    <button id="rec">REC</button>
+    <button id="stop">STOP</button>
+
+    <script>
+        if (navigator.mediaDevices) {
+            console.log('getUserMedia supported.');
+
+            // mendefinisikan rekaman berformat audio bukan video
+            var constraints = { audio: true, video: false};
+
+            // menyimpan audio hasil rekaman dalam array
+            var chunks = [];
+            navigator.mediaDevices.getUserMedia(constraints).then(function(stream)
+            {
+                var mediaRecorder = new mediaRecorder(stream);
+
+                var record = document.getElementById('rec');
+                var stop = document.getElementById('stop');
+
+                // fungsi tombol record
+                record.onclick = function() {
+                    mediaRecorder.start();
+                    console.log(mediaRecorder.state);
+                    console.log("recorder started");
+                    record.style.background = "red";
+                    record.style.color = "white";
+                }
+
+                // fungsi tombol stop
+                stop.onclick = function() {
+                    mediaRecorder.stop();
+                    console.log(mediaRecorder.state);
+                    console.log("record stoped");
+                    record.style.background = "";
+                    record.style.color = "";
+                }
+
+                mediaRecorder.onstop = function(e) {
+                    console.log("data available after MediaRecorder.stop() called.");
+
+                    var clipName = prompt('Enter a name for your sound clipt');
+                    var clipContainer = document.createElement('article');
+                    var clipLabel = document.createElement('p');
+                    var audio = document.createElement('audio');
+                    var deleteButton = document.createElement('button');
+
+                    clipContainer.classList.add('clip');
+                    audio.setAttribute('controls', '');
+                    deleteButton.innerHTML = "Delete";
+                    clipLabel.innerHTML = clipName;
+
+                    clipContainer.appendChild(audio);
+                    clipContainer.appendChild(clipLabel);
+                    clipContainer.appendChild(deleteButton);
+                    document.body.appendChild(clipContainer);
+
+                    audio.controls = true;
+                    var blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus'});
+                    chunks = [];
+                    var audioURL = URL.createObjectURL(blob);
+                    audio.src = audioURL;
+                    console.log("recorder stopped");
+
+                    deleteButton.onclick = function(e) {
+                        evtTgt = e.target;
+                        evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+                    }
+                }
+
+                mediaRecorder.ondataavailable = function(e) {
+                    chunks.push(e.data);
+                }
+            })
+
+            .catch(function(err) {
+                console.log('The following error eccured: ' + err);
+            })
+        }
+    </script>
+</body>
+</html>
