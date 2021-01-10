@@ -22,8 +22,8 @@
             function startGame() {
                 myApp.start();
                 for (var i = 1; i < 4; i++) {
-                    sprites[i] = new sprite('Assets/obj_' + i + '.png', 100, i * 100);
-                    targets[i] = new sprite('Assets/target_' + i + '.png', 500, i * 100);
+                    sprites[i] = new sprite('Assets/obj-' + i + '.png', 100, i * 100);
+                    targets[i] = new sprite('Assets/target-' + i + '.png', 500, i * 100);
                     dragable(sprites[i], targets[i]);
                 }
             }
@@ -31,7 +31,7 @@
                 canvas: document.createElement("canvas"),
                 start: function () {
                     this.canvas.width = 800;
-                    this.canvas.height = 500;
+                    this.canvas.height = 600;
                     this.context = this.canvas.getContext("2d");
                     document.body.insertBefore(this.canvas,
                         document.body.childNodes[0]);
